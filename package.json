@@ -1,0 +1,13 @@
+{
+	"name": "your-app-name",
+	"version": "1.0.0",
+	"main": "index.cjs",
+	"type": "commonjs",
+	"scripts": {
+		"start": "node index.cjs"
+	},
+	"dependencies": {
+		"express": "^4.17.1",
+		"axios": "^0.21.1"
+	}
+}
