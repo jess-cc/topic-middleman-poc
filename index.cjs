@@ -22,32 +22,27 @@ const requestOptions = {
 };
 
 app.post('/', (req, res) => {
-  console.log(`Received ${req.method} request`);
-  console.log('Headers:', req.headers);
-  console.log('Data:', req.body);
+    const conversationId = req.body.data?.conversation.id;
+    console.log("DEBUG conversationId", conversationId)
 
-  const conversationId = req.body.data.conversation.id;
-  console.log("DEBUG conversationID", conversationId)
-  
-  if (conversationId) {
-    console.log("DEBUG will be redirect?")
-    res.status(200)
-    // res.redirect(`/redirect?conversationId=${conversationId}`);
-    fetch(`https://crm-dev.internal.collabo.dev/api/conversations/${conversationId}/messages`, requestOptions).then((response) => {
-    if (response.ok) {
-      res.status(200).send('Success');
+    if (conversationId) {
+      fetch(`https://crm-dev.internal.collabo.dev/api/conversations/${conversationId}/messages`, requestOptions)
+        .then((response) => {
+          if (response.ok) {
+            res.status(200).send('Success');
+          } else {
+            console.error('Error response:', response.statusText);
+            res.status(500).send('Internal Server Error');
+          }
+        })
+        .catch((error) => {
+          console.error('Fetch error:', error);
+          res.status(500).send('Internal Server Error');
+        });
     } else {
-      console.error('Error response:', response.statusText);
-      res.status(500).send('Internal Server Error');
+      res.status(400).send('Bad Request: Missing conversation ID');
     }
-  })
-  .then((result) => console.log(result))
-  .catch((error) => console.error(error));
-  } else {
-    console.error('Conversation ID not found in the data');
-    res.status(400).send('Bad Request: Missing conversation ID');
-  }
-});
+  });
 
 app.listen(3000, () => {
     console.log('Server running on port 3000');
